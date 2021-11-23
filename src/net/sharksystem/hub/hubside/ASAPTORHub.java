@@ -12,7 +12,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.time.LocalDateTime;
@@ -63,10 +62,11 @@ public class ASAPTORHub extends HubSingleEntitySharedChannel implements Runnable
         TorServerSocket torServerSocket = node.createHiddenService(localport, hiddenservicedirport);
         System.out.println("Hidden Service Binds to   " + torServerSocket.getHostname() + " ");
         System.out.println("Tor Service Listen to Port  " + torServerSocket.getServicePort());
+
         this.port = torServerSocket.getServicePort();
-        this.nextPort = port+1;
         this.serverSocket = torServerSocket.getServerSocket();
-        System.out.println("ServerSocket: "+this.serverSocket);
+
+        this.nextPort = port+1;
         this.newConnection = newConnection;
     }
 
@@ -124,13 +124,9 @@ public class ASAPTORHub extends HubSingleEntitySharedChannel implements Runnable
 
 
             try {
-                System.out.println("Test before HubConnectorSession");
                 this.now = LocalDateTime.now();
                 System.out.println("Accepted Client at Address - " +  newConnection.getRemoteSocketAddress()
                                            + " on port " + newConnection.getLocalPort() + " at time " + dtf.format(now));
-//                ObjectInputStream in = new ObjectInputStream(newConnection.getInputStream());
-//                System.out.println((String) in.readObject());
-//                System.out.println("Test before HubConnectorSession");
 
                 Connector hubConnectorSession;
                 if(this.newConnection) {
@@ -247,7 +243,7 @@ public class ASAPTORHub extends HubSingleEntitySharedChannel implements Runnable
             tcpHub.setMaxIdleConnectionInSeconds(maxIdleInSeconds);
         }
 
-        System.out.println("start TCP hub on port " + tcpHub.port
+        System.out.println("start TOR hub on port " + tcpHub.port
                 + " with maxIdleInSeconds: " + tcpHub.maxIdleInMillis / 1000);
 
         tcpHub.startStatusPrinter();
